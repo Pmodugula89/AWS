@@ -1,1 +1,45 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create an Auto Scaling Group (ASG) with scheduled scaling
+
+Resources:
+  ASGLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: ASGLaunchTemplate
+      LaunchTemplateData:
+        ImageId: ami-0c55b159cbfafe1f0  # Amazon Linux 2 AMI (Change for your region)
+        InstanceType: t2.micro
+        SecurityGroups:
+          - Ref: ASGSecurityGroup
+
+  ASGSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH and HTTP access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  ASG:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: MyASG
+      MinSize: 1
+      DesiredCapacity: 1
+      MaxSize: 2
+      VPCZoneIdentifier:
+        - subnet-xxxxxxxx  # Replace with your subnet ID
+      LaunchTemplate:
+        LaunchTemplateId: !Ref ASGLaunchTemplate
+        Version: !GetAtt ASGLaunchTemplate.LatestVersionNumber
+      Tags:
+        - Key: Name
+          Value: ASGInstance
+          PropagateAtLaunch: true
 
