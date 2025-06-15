@@ -34,12 +34,11 @@ Resources:
       DesiredCapacity: 1
       MaxSize: 2
       VPCZoneIdentifier:
-- subnet-0780552494a59a43b # Replace with your subnet ID
-          LaunchTemplate:
+        - subnet-0780552494a59a43b  # Replace with your subnet ID
+      LaunchTemplate:
         LaunchTemplateId: !Ref ASGLaunchTemplate
         Version: !GetAtt ASGLaunchTemplate.LatestVersionNumber
       Tags:
         - Key: Name
           Value: ASGInstance
           PropagateAtLaunch: true
-
